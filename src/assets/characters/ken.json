@@ -1,0 +1,355 @@
+{
+	"frames": {
+		"ken01.png": {
+			"frame": {
+				"x": 1,
+				"y": 1,
+				"w": 135,
+				"h": 70
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 135,
+				"h": 70
+			},
+			"sourceSize": {
+				"w": 135,
+				"h": 70
+			}
+		},
+		"ken02.png": {
+			"frame": {
+				"x": 138,
+				"y": 1,
+				"w": 135,
+				"h": 70
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 135,
+				"h": 70
+			},
+			"sourceSize": {
+				"w": 135,
+				"h": 70
+			}
+		},
+		"ken03.png": {
+			"frame": {
+				"x": 1,
+				"y": 73,
+				"w": 135,
+				"h": 70
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 135,
+				"h": 70
+			},
+			"sourceSize": {
+				"w": 135,
+				"h": 70
+			}
+		},
+		"ken04.png": {
+			"frame": {
+				"x": 138,
+				"y": 73,
+				"w": 135,
+				"h": 70
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 135,
+				"h": 70
+			},
+			"sourceSize": {
+				"w": 135,
+				"h": 70
+			}
+		},
+		"ken05.png": {
+			"frame": {
+				"x": 1,
+				"y": 145,
+				"w": 135,
+				"h": 70
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 135,
+				"h": 70
+			},
+			"sourceSize": {
+				"w": 135,
+				"h": 70
+			}
+		},
+		"ken06.png": {
+			"frame": {
+				"x": 138,
+				"y": 145,
+				"w": 135,
+				"h": 70
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 135,
+				"h": 70
+			},
+			"sourceSize": {
+				"w": 135,
+				"h": 70
+			}
+		},
+		"ken07.png": {
+			"frame": {
+				"x": 1,
+				"y": 217,
+				"w": 135,
+				"h": 70
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 135,
+				"h": 70
+			},
+			"sourceSize": {
+				"w": 135,
+				"h": 70
+			}
+		},
+		"ken08.png": {
+			"frame": {
+				"x": 138,
+				"y": 217,
+				"w": 135,
+				"h": 70
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 135,
+				"h": 70
+			},
+			"sourceSize": {
+				"w": 135,
+				"h": 70
+			}
+		},
+		"ken09.png": {
+			"frame": {
+				"x": 1,
+				"y": 289,
+				"w": 135,
+				"h": 70
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 135,
+				"h": 70
+			},
+			"sourceSize": {
+				"w": 135,
+				"h": 70
+			}
+		},
+		"ken10.png": {
+			"frame": {
+				"x": 138,
+				"y": 289,
+				"w": 135,
+				"h": 70
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 135,
+				"h": 70
+			},
+			"sourceSize": {
+				"w": 135,
+				"h": 70
+			}
+		},
+		"ken11.png": {
+			"frame": {
+				"x": 275,
+				"y": 1,
+				"w": 135,
+				"h": 70
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 135,
+				"h": 70
+			},
+			"sourceSize": {
+				"w": 135,
+				"h": 70
+			}
+		},
+		"ken12.png": {
+			"frame": {
+				"x": 275,
+				"y": 73,
+				"w": 135,
+				"h": 70
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 135,
+				"h": 70
+			},
+			"sourceSize": {
+				"w": 135,
+				"h": 70
+			}
+		},
+		"ken13.png": {
+			"frame": {
+				"x": 275,
+				"y": 145,
+				"w": 135,
+				"h": 70
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 135,
+				"h": 70
+			},
+			"sourceSize": {
+				"w": 135,
+				"h": 70
+			}
+		},
+		"ken14.png": {
+			"frame": {
+				"x": 275,
+				"y": 217,
+				"w": 135,
+				"h": 70
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 135,
+				"h": 70
+			},
+			"sourceSize": {
+				"w": 135,
+				"h": 70
+			}
+		},
+		"ken15.png": {
+			"frame": {
+				"x": 275,
+				"y": 289,
+				"w": 135,
+				"h": 70
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 135,
+				"h": 70
+			},
+			"sourceSize": {
+				"w": 135,
+				"h": 70
+			}
+		},
+		"ken16.png": {
+			"frame": {
+				"x": 1,
+				"y": 361,
+				"w": 135,
+				"h": 70
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 135,
+				"h": 70
+			},
+			"sourceSize": {
+				"w": 135,
+				"h": 70
+			}
+		},
+		"ken17.png": {
+			"frame": {
+				"x": 412,
+				"y": 1,
+				"w": 134,
+				"h": 70
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 134,
+				"h": 70
+			},
+			"sourceSize": {
+				"w": 134,
+				"h": 70
+			}
+		}
+	},
+	"meta": {
+		"app": "http://www.codeandweb.com/texturepacker",
+		"version": "1.0",
+		"image": "spritesheet.png",
+		"format": "RGBA8888",
+		"size": {
+			"w": 547,
+			"h": 432
+		},
+		"scale": "1"
+	}
+}

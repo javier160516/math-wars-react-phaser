@@ -1,9 +1,9 @@
 import { GameInstance, IonPhaser } from "@ion-phaser/react";
 import React, { useEffect, useRef, useState } from "react";
 import Phaser from 'phaser'
-
+import Battle from "./Battle";
 class MainScene extends Phaser.Scene {
-//   private helloWorld!: Phaser.GameObjects.Text;
+  //   private helloWorld!: Phaser.GameObjects.Text;
 
   init() {
     this.cameras.main.setBackgroundColor("#24252A");
@@ -55,21 +55,19 @@ const Waiting = (props: any) => {
   const gameRef = useRef<HTMLIonPhaserElement>(null);
   const [game, setGame] = useState<GameInstance>();
   const { setInitialize, initialize } = props;
+  const [isWaiting, setIsWaiting] = useState(false);
 
-  const destroy = () => {
-    gameRef.current?.destroy();
-    setInitialize(false);
-    setGame(undefined);
-  };
 
   useEffect(() => {
-    if (initialize) {
-      setGame(Object.assign({}, gameConfig));
-    }
-  }, [initialize]);
+    setGame(Object.assign({}, gameConfig));
+  }, []);
   return (
     <>
-      <IonPhaser ref={gameRef} game={game} initialize={initialize} />
+      {isWaiting ? (
+        <IonPhaser ref={gameRef} game={game}  />
+      ) : (
+        <Battle />
+      )}
     </>
   );
 };
