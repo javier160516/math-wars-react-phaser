@@ -148,3 +148,27 @@ a.bttn-dark:focus {
 .container-inicio button:hover {
   cursor: pointer;
 }
+
+.container-music{
+  position:absolute;
+  padding: 20px 0;
+  top: -9%;
+  right: 92%;
+  transform: translate(-50%, 50%);
+  background: transparent;
+}
+
+.container-music button{
+  background-image: url(./assets/button-pause.png);
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size:contain;
+  background-color: transparent;
+  width: 60px;
+  height: 60px;
+  border: none;
+}
+
+.container-music button:hover{
+  cursor: pointer;
+}
