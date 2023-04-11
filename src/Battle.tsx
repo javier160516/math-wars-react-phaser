@@ -4,10 +4,12 @@ import Phaser from 'phaser'
 import { GameInstance, IonPhaser } from '@ion-phaser/react'
 import './Battle.css'
 import scene1 from './assets/scenes/scene1-Bg.jpeg'
+import Heart from './assets/resources/heart.png'
 import fighter from './assets/characters/fighter.json'
 import fighterBg from './assets/characters/fighter.png'
 import magic from './assets/characters/elves-craft-pixel.json'
 import magicBg from './assets/characters/elves-craft-pixel.png'
+import panel from './assets/resources/panel.png'
 
 class HealthBar {
 
@@ -15,9 +17,9 @@ class HealthBar {
         this.bar = new Phaser.GameObjects.Graphics(scene);
 
         this.x = x;
-        this.y = y;
-        this.value = 100;
-        this.p = 76 / 100;
+        this.y = 70;
+        this.value = 200;
+        this.p = 170 / 200;
 
         this.draw();
 
@@ -41,12 +43,12 @@ class HealthBar {
 
         //  BG
         this.bar.fillStyle(0x000000);
-        this.bar.fillRect(this.x, this.y, 80, 16);
+        this.bar.fillRect(this.x - 20, this.y, 174, 16);
 
         //  Health
 
         this.bar.fillStyle(0xffffff);
-        this.bar.fillRect(this.x + 2, this.y + 2, 76, 12);
+        this.bar.fillRect(this.x - 18, this.y + 2, 170, 12);
 
         if (this.value < 30) {
             this.bar.fillStyle(0xff0000);
@@ -57,7 +59,7 @@ class HealthBar {
 
         var d = Math.floor(this.p * this.value);
 
-        this.bar.fillRect(this.x + 2, this.y + 2, d, 12);
+        this.bar.fillRect(this.x - 18, this.y + 2, d, 12);
     }
 
 }
@@ -181,6 +183,10 @@ class BattleScene extends Phaser.Scene {
         this.load.image("background", scene1);
         this.load.atlas("fighter", fighterBg, fighter);
         this.load.atlas("elves", magicBg, magic);
+        this.load.image("Heart", Heart);
+        this.load.image("Heart2", Heart);
+        this.load.image("panel", panel);
+        this.load.image("panel2", panel);
 
     }
 
@@ -194,6 +200,38 @@ class BattleScene extends Phaser.Scene {
             .setOrigin(0.5, 0.5);
         bg.displayWidth = this.sys.canvas.width;
         bg.displayHeight = this.sys.canvas.height;
+        //panel player 1
+        let panel = this.add.image(
+            this.cameras.main.width / 6.5,
+            this.cameras.main.height / 3 - 150,
+            "panel"
+        )
+        panel.displayWidth = 280;
+        panel.displayHeight = 100;
+        //pnael player 2
+        let panel2 = this.add.image(
+            this.cameras.main.width / 1.18,
+            this.cameras.main.height / 3 - 150,
+            "panel2"
+        )
+        panel2.displayWidth = 280;
+        panel2.displayHeight = 100;
+        //hearth image lifebar or heatlhbar
+        let heart = this.add.image(
+            this.cameras.main.width / 12,
+            this.cameras.main.width / 3 - 400,
+            'Heart'
+        )
+        heart.displayWidth = 35;
+        heart.displayHeight = 35;
+        //hearth image lifebar or heatlhbar
+        let heart2 = this.add.image(
+            this.cameras.main.width / 1.29,
+            this.cameras.main.width / 3 - 400,
+            'Heart'
+        )
+        heart2.displayWidth = 35;
+        heart2.displayHeight = 35;
         //characters
         //alive
         this.anims.create({ key: 'greenIdle', frames: this.anims.generateFrameNames('elves', { prefix: 'green_idle_', start: 0, end: 4 }), frameRate: 10, repeat: -1 });
@@ -207,15 +245,14 @@ class BattleScene extends Phaser.Scene {
         // blues.push(new BlueElf(this, 120, 476));
         // blues.push(new BlueElf(this, 220, 480));
         // blues.push(new BlueElf(this, 320, 484));
-        blues.push(new BlueElf(this, 300, 480));
+        blues.push(new BlueElf(this, 300, 380));
 
         // greens.push(new GreenElf(this, 560, 486));
         // greens.push(new GreenElf(this, 670, 488));
         // greens.push(new GreenElf(this, 780, 485));
-        greens.push(new GreenElf(this, 1150, 484));
+        greens.push(new GreenElf(this, 1150, 384));
     }
 }
-
 function getGreen() {
     if (greensAlive) {
         greens = Phaser.Utils.Array.Shuffle(greens);
