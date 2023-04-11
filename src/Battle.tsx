@@ -4,9 +4,9 @@ import Phaser from 'phaser'
 import { GameInstance, IonPhaser } from '@ion-phaser/react'
 import './Battle.css'
 import scene1 from './assets/scenes/scene1-Bg.jpeg'
+import scene2 from './assets/scenes/scene2-Bg.jpeg'
+import scene3 from './assets/scenes/Scene3_Bg.jpeg'
 import Heart from './assets/resources/heart.png'
-import fighter from './assets/characters/fighter.json'
-import fighterBg from './assets/characters/fighter.png'
 import magic from './assets/characters/elves-craft-pixel.json'
 import magicBg from './assets/characters/elves-craft-pixel.png'
 import panel from './assets/resources/panel.png'
@@ -177,11 +177,17 @@ let greens = [];
 
 var bluesAlive = 1;
 var greensAlive = 1;
+const randomScenes = (max) => {
+    const random = Math.floor(Math.random() * max);
+    return scenes[random];
+};
+
+const scenes = [scene1, scene2, scene3];
 
 class BattleScene extends Phaser.Scene {
+
     preload() {
-        this.load.image("background", scene1);
-        this.load.atlas("fighter", fighterBg, fighter);
+        this.load.image("background", randomScenes(3));
         this.load.atlas("elves", magicBg, magic);
         this.load.image("Heart", Heart);
         this.load.image("Heart2", Heart);
@@ -191,6 +197,8 @@ class BattleScene extends Phaser.Scene {
     }
 
     create() {
+
+
         let bg = this.add
             .image(
                 this.cameras.main.width / 2,
@@ -242,15 +250,10 @@ class BattleScene extends Phaser.Scene {
         //die
         this.anims.create({ key: 'greenDead', frames: this.anims.generateFrameNames('elves', { prefix: 'green_die_', start: 0, end: 4 }), frameRate: 6 });
         this.anims.create({ key: 'blueDead', frames: this.anims.generateFrameNames('elves', { prefix: 'blue_die_', start: 0, end: 4 }), frameRate: 6 });
-        // blues.push(new BlueElf(this, 120, 476));
-        // blues.push(new BlueElf(this, 220, 480));
-        // blues.push(new BlueElf(this, 320, 484));
-        blues.push(new BlueElf(this, 300, 380));
-
-        // greens.push(new GreenElf(this, 560, 486));
-        // greens.push(new GreenElf(this, 670, 488));
-        // greens.push(new GreenElf(this, 780, 485));
-        greens.push(new GreenElf(this, 1150, 384));
+        //player 1
+        blues.push(new BlueElf(this, 300, 450));
+        //player 2
+        greens.push(new GreenElf(this, 1150, 454));
     }
 }
 function getGreen() {
@@ -317,7 +320,8 @@ const Battle = (props: any) => {
     }, [props.initialize]);
     return (
         <>
-            <IonPhaser ref={gameRef} game={game} initialize={!props.initialize} />
+            <IonPhaser ref={gameRef} game={game} initialize={!props.initialize}/>
+
             <div
                 className='battle'
             >
@@ -340,6 +344,7 @@ const Battle = (props: any) => {
                         />
                     </div>
                 </div>
+
             </div>
         </>
     )
