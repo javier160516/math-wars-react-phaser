@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react'
-import Phaser from 'phaser'
+import Phaser, { GameObjects } from 'phaser'
 import { GameInstance, IonPhaser } from '@ion-phaser/react'
 import './Battle.css'
 import scene1 from './assets/scenes/scene1-Bg.jpeg'
@@ -8,6 +8,12 @@ import fighter from './assets/characters/fighter.json'
 import fighterBg from './assets/characters/fighter.png'
 import magic from './assets/characters/elves-craft-pixel.json'
 import magicBg from './assets/characters/elves-craft-pixel.png'
+import correct from './assets/correct_a3.svg'
+import wrong from './assets/wrong_a2.svg'
+import fighTrack from './assets/music/fight1.ogg'
+import mov from './assets/soundeffects/mov.mp3'
+
+
 
 class HealthBar {
 
@@ -24,7 +30,7 @@ class HealthBar {
         scene.add.existing(this.bar);
     }
 
-    decrease(amount) {
+    decrease(amount: number) {
         this.value -= amount;
 
         if (this.value < 0) {
@@ -74,7 +80,7 @@ class Missile extends Phaser.GameObjects.Image {
 
 class Elf extends Phaser.GameObjects.Sprite {
 
-    constructor(scene, color, x, y) {
+    constructor(scene: Phaser.Scene, color: any, x: number | undefined, y: number | undefined) {
         super(scene, x, y);
 
         this.color = color;
@@ -97,11 +103,11 @@ class Elf extends Phaser.GameObjects.Sprite {
         this.timer = scene.time.addEvent({ delay: Phaser.Math.Between(1000, 3000), callback: this.fire, callbackScope: this });
     }
 
-    preUpdate(time, delta) {
+    preUpdate(time: number, delta: number) {
         super.preUpdate(time, delta);
     }
 
-    animComplete(animation) {
+    animComplete(animation: { key: string }) {
         if (animation.key === this.color + 'Attack') {
             this.play(this.color + 'Idle');
         }
@@ -148,7 +154,7 @@ class Elf extends Phaser.GameObjects.Sprite {
 
 class BlueElf extends Elf {
 
-    constructor(scene, x, y) {
+    constructor(scene: this, x: number, y: number) {
         super(scene, 'blue', x, y);
 
         this.missile = new Missile(scene, 'blue-missile');
@@ -160,7 +166,7 @@ class BlueElf extends Elf {
 
 class GreenElf extends Elf {
 
-    constructor(scene, x, y) {
+    constructor(scene: this, x: number, y: number) {
         super(scene, 'green', x, y);
 
         this.missile = new Missile(scene, 'green-missile');
@@ -170,21 +176,98 @@ class GreenElf extends Elf {
 
 }
 
-let blues = [];
-let greens = [];
+let blues: any[] = [];
+let greens: any[] = [];
 
 var bluesAlive = 1;
 var greensAlive = 1;
 
+
+
+
 class BattleScene extends Phaser.Scene {
+
     preload() {
+        this.load.image("correct",correct);
+        this.load.image("wrong", wrong);
         this.load.image("background", scene1);
         this.load.atlas("fighter", fighterBg, fighter);
         this.load.atlas("elves", magicBg, magic);
-
+        this.load.audio("fightMusic", fighTrack);
+        this.load.audio("mov", mov);
     }
-
     create() {
+        
+        let music = this.sound.add("fightMusic");
+        let musicConfig = {
+            mute: false,
+            volume: 0.1,
+            rate: 1,
+            detune: 0,
+            seek: 0,
+            loop: true,
+            delay: 0,
+        
+        };
+        music.play(musicConfig);
+
+        let mov = this.sound.add("mov");
+        let movSoundConfig={
+            mute: false,
+            volume:0.5,
+            rate:1,
+            detune: 0,
+            seek: 0,
+            loop: false,
+            delay: 0
+        };
+        mov.play(movSoundConfig);
+
+       const movSound = document.querySelector('.battle_buttons');
+       movSound?.addEventListener('pointerover', ()=>{
+        mov.play();
+       })
+
+        
+        
+        let correctAnswer: GameObjects.Image
+        let wrongAnswer: GameObjects.Image
+       
+
+        let answer = document.querySelector('#answer');
+        answer?.addEventListener('click', ()=>{
+            
+            correctAnswer = this.add.image(
+                this.cameras.main.width / 2,
+                this.cameras.main.height / 3.5 - 80,
+                "correct"
+            );
+            
+            correctAnswer.displayHeight = 250;
+            correctAnswer.displayWidth = 300;
+          
+               
+            
+        })
+        
+
+        
+
+        let answer2 = document.querySelector('#answer2');
+        answer2?.addEventListener('click',()=>{
+     
+            wrongAnswer = this.add.image(
+                this.cameras.main.width / 2,
+                this.cameras.main.height / 3.5 - 80,
+                "wrong"
+            );
+         
+            wrongAnswer.displayHeight = 250;
+            wrongAnswer.displayWidth = 250;
+            
+            
+        })
+
         let bg = this.add
             .image(
                 this.cameras.main.width / 2,
@@ -213,8 +296,12 @@ class BattleScene extends Phaser.Scene {
         // greens.push(new GreenElf(this, 670, 488));
         // greens.push(new GreenElf(this, 780, 485));
         greens.push(new GreenElf(this, 1150, 484));
+        
+    
     }
 }
+
+
 
 function getGreen() {
     if (greensAlive) {
@@ -269,6 +356,7 @@ const battleConfig: GameInstance = {
 }
 
 
+
 const Battle = (props: any) => {
     const gameRef = useRef<HTMLIonPhaserElement>(null);
     const [game, setGame] = useState<GameInstance>();
@@ -290,18 +378,21 @@ const Battle = (props: any) => {
                     </div>
 
                     <div className='battle_buttons'>
-                        <button
+                        <button id='answer'
+                            className='battle_answer'
+                           
+                            
+
+                        />
+                        <button id='answer2'
                             className='battle_answer'
 
                         />
-                        <button
-                            className='battle_answer'
-
-                        />
-                        <button
+                        <button id='answer'
                             className='battle_answer'
                         />
                     </div>
+
                 </div>
             </div>
         </>
