@@ -13,11 +13,11 @@ import panel from './assets/resources/panel.png'
 
 class HealthBar {
 
-    constructor(scene: any, x: any, y: any) {
+    constructor(scene: any, x, y: any) {
         this.bar = new Phaser.GameObjects.Graphics(scene);
 
-        this.x = x;
-        this.y = 70;
+        this.x = x - 50;
+        this.y = y - 270;
         this.value = 200;
         this.p = 170 / 200;
 
@@ -43,12 +43,12 @@ class HealthBar {
 
         //  BG
         this.bar.fillStyle(0x000000);
-        this.bar.fillRect(this.x - 20, this.y, 174, 16);
+        this.bar.fillRect(this.x, this.y, 174, 16);
 
         //  Health
 
         this.bar.fillStyle(0xffffff);
-        this.bar.fillRect(this.x - 18, this.y + 2, 170, 12);
+        this.bar.fillRect(this.x, this.y + 2, 170, 12);
 
         if (this.value < 30) {
             this.bar.fillStyle(0xff0000);
@@ -59,7 +59,7 @@ class HealthBar {
 
         var d = Math.floor(this.p * this.value);
 
-        this.bar.fillRect(this.x - 18, this.y + 2, d, 12);
+        this.bar.fillRect(this.x, this.y + 2, d, 12);
     }
 
 }
@@ -151,7 +151,7 @@ class Elf extends Phaser.GameObjects.Sprite {
 class BlueElf extends Elf {
 
     constructor(scene, x, y) {
-        super(scene, 'blue', x, y);
+        super(scene, 'blue', x + 30, y);
 
         this.missile = new Missile(scene, 'blue-missile');
 
@@ -163,7 +163,7 @@ class BlueElf extends Elf {
 class GreenElf extends Elf {
 
     constructor(scene, x, y) {
-        super(scene, 'green', x, y);
+        super(scene, 'green', x + 25, y);
 
         this.missile = new Missile(scene, 'green-missile');
 
@@ -198,7 +198,6 @@ class BattleScene extends Phaser.Scene {
 
     create() {
 
-
         let bg = this.add
             .image(
                 this.cameras.main.width / 2,
@@ -218,7 +217,7 @@ class BattleScene extends Phaser.Scene {
         panel.displayHeight = 100;
         //pnael player 2
         let panel2 = this.add.image(
-            this.cameras.main.width / 1.18,
+            this.cameras.main.width / 1.2,
             this.cameras.main.height / 3 - 150,
             "panel2"
         )
@@ -227,15 +226,15 @@ class BattleScene extends Phaser.Scene {
         //hearth image lifebar or heatlhbar
         let heart = this.add.image(
             this.cameras.main.width / 12,
-            this.cameras.main.width / 3 - 400,
+            this.cameras.main.width / 3 - 430,
             'Heart'
         )
         heart.displayWidth = 35;
         heart.displayHeight = 35;
         //hearth image lifebar or heatlhbar
         let heart2 = this.add.image(
-            this.cameras.main.width / 1.29,
-            this.cameras.main.width / 3 - 400,
+            this.cameras.main.width / 1.12,
+            this.cameras.main.width / 3 - 430,
             'Heart'
         )
         heart2.displayWidth = 35;
