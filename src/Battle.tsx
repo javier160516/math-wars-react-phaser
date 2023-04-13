@@ -154,13 +154,8 @@ class Elf extends Phaser.GameObjects.Sprite {
 
 class BlueElf extends Elf {
 
-<<<<<<< HEAD
-    constructor(scene, x, y) {
-        super(scene, 'blue', x + 30, y);
-=======
     constructor(scene: this, x: number, y: number) {
         super(scene, 'blue', x, y);
->>>>>>> origin/develop
 
         this.missile = new Missile(scene, 'blue-missile');
 
@@ -171,13 +166,8 @@ class BlueElf extends Elf {
 
 class GreenElf extends Elf {
 
-<<<<<<< HEAD
-    constructor(scene, x, y) {
-        super(scene, 'green', x + 25, y);
-=======
     constructor(scene: this, x: number, y: number) {
         super(scene, 'green', x, y);
->>>>>>> origin/develop
 
         this.missile = new Missile(scene, 'green-missile');
 
