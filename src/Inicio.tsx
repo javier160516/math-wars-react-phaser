@@ -121,24 +121,24 @@ const gameConfig: GameInstance = {
 const Inicio = (props: any) => {
   const gameRef = useRef<HTMLIonPhaserElement>(null);
   const [game, setGame] = useState<GameInstance>();
-  const { setInitialize, initialize, name, setName, changeView } = props;
+  const { alias, setAlias, handleStart, connection } = props;
 
   useEffect(() => {
-    if (!props.initialize) {
+    if (!connection) {
       setGame(Object.assign({}, gameConfig));
     }
-  }, [props.initialize]);
+  }, [connection]);
   return (
     <>
-      <IonPhaser ref={gameRef} game={game} initialize={!props.initialize} />
+      <IonPhaser ref={gameRef} game={game} initialize={!connection} />
       <div className="container-inicio">
         <input 
             type="text" 
-            value={name.value}
+            value={alias}
             placeholder="Escribe tu nombre" 
-            onChange={(e) => setName({value: e.target.value, error: ''})}
+            onChange={(e) => setAlias(e.target.value)}
         />
-        <button id="start" type="button" onClick={() => changeView()}></button>
+        <button id="start" type="button" onClick={(e) => handleStart(e)}></button>
       </div>
       <div className="container-music">
         <button id="pause" type="button"></button>

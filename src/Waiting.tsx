@@ -1,7 +1,9 @@
 import { GameInstance, IonPhaser } from "@ion-phaser/react";
 import React, { useEffect, useRef, useState } from "react";
-import Phaser from 'phaser'
+import Phaser from "phaser";
 import Battle from "./Battle";
+import { ws } from "./config";
+
 class MainScene extends Phaser.Scene {
   //   private helloWorld!: Phaser.GameObjects.Text;
 
@@ -54,17 +56,39 @@ const gameConfig: GameInstance = {
 const Waiting = (props: any) => {
   const gameRef = useRef<HTMLIonPhaserElement>(null);
   const [game, setGame] = useState<GameInstance>();
-  const { setInitialize, initialize } = props;
-  const [isWaiting, setIsWaiting] = useState(false);
+  const [waiting, setWaiting] = useState(true);
+  const [waitingMessage, setWaitingMessage] = useState("");
 
+  useEffect(() => {
+    ws.on("connectedInRoom", (data) => {
+      console.log(data);
+      if (data.data < 2) {
+        console.log(data.data.length, " usuarios conectados");
+        setWaiting(true);
+      } else {
+        setWaiting(false);
+      }
+    });
+
+    ws.on("message", (data) => {
+      setWaitingMessage(data);
+    });
+
+    ws.on("disconnected", (data) => {
+      console.log(data);
+    });
+  }, []);
 
   useEffect(() => {
     setGame(Object.assign({}, gameConfig));
   }, []);
   return (
     <>
-      {isWaiting ? (
-        <IonPhaser ref={gameRef} game={game}  />
+      {waiting ? (
+        <>
+          <IonPhaser ref={gameRef} game={game} />
+          <h2 style={{ position: "absolute" }}>Esperando otro jugador</h2>
+        </>
       ) : (
         <Battle />
       )}

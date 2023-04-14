@@ -1,179 +1,180 @@
-
-import React, { useState, useEffect, useRef } from 'react'
-import Phaser, { GameObjects } from 'phaser'
-import { GameInstance, IonPhaser } from '@ion-phaser/react'
-import './Battle.css'
-import scene1 from './assets/scenes/scene1-Bg.jpeg'
-import scene2 from './assets/scenes/scene2-Bg.jpeg'
-import scene3 from './assets/scenes/Scene3_Bg.jpeg'
-import Heart from './assets/resources/heart.png'
-import magic from './assets/characters/elves-craft-pixel.json'
-import magicBg from './assets/characters/elves-craft-pixel.png'
-import correct from './assets/correct_a3.svg'
-import wrong from './assets/wrong_a2.svg'
-import fighTrack from './assets/music/fight1.ogg'
-import mov from './assets/soundeffects/mov.mp3'
-import panel from './assets/resources/panel.png'
+import React, { useState, useEffect, useRef } from "react";
+import Phaser, { GameObjects } from "phaser";
+import { GameInstance, IonPhaser } from "@ion-phaser/react";
+import "./Battle.css";
+import scene1 from "./assets/scenes/scene1-Bg.jpeg";
+import scene2 from "./assets/scenes/scene2-Bg.jpeg";
+import scene3 from "./assets/scenes/Scene3_Bg.jpeg";
+import Heart from "./assets/resources/heart.png";
+import magic from "./assets/characters/elves-craft-pixel.json";
+import magicBg from "./assets/characters/elves-craft-pixel.png";
+import correct from "./assets/correct_a3.svg";
+import wrong from "./assets/wrong_a2.svg";
+import fighTrack from "./assets/music/fight1.ogg";
+import mov from "./assets/soundeffects/mov.mp3";
+import panel from "./assets/resources/panel.png";
 
 class HealthBar {
+  constructor(scene: any, x: any, y: any) {
+    this.bar = new Phaser.GameObjects.Graphics(scene);
 
-    constructor(scene: any, x: any, y: any) {
-        this.bar = new Phaser.GameObjects.Graphics(scene);
+    this.x = x;
+    this.y = 70;
+    this.value = 200;
+    this.p = 170 / 200;
 
-        this.x = x;
-        this.y = 70;
-        this.value = 200;
-        this.p = 170 / 200;
+    this.draw();
 
-        this.draw();
+    scene.add.existing(this.bar);
+  }
 
-        scene.add.existing(this.bar);
+  decrease(amount: number) {
+    this.value -= amount;
+
+    if (this.value < 0) {
+      this.value = 0;
     }
 
-    decrease(amount: number) {
-        this.value -= amount;
+    this.draw();
 
-        if (this.value < 0) {
-            this.value = 0;
-        }
+    return this.value === 0;
+  }
 
-        this.draw();
+  draw() {
+    this.bar.clear();
 
-        return (this.value === 0);
+    //  BG
+    this.bar.fillStyle(0x000000);
+    this.bar.fillRect(this.x - 20, this.y, 174, 16);
+
+    //  Health
+
+    this.bar.fillStyle(0xffffff);
+    this.bar.fillRect(this.x - 18, this.y + 2, 170, 12);
+
+    if (this.value < 30) {
+      this.bar.fillStyle(0xff0000);
+    } else {
+      this.bar.fillStyle(0x00ff00);
     }
 
-    draw() {
-        this.bar.clear();
+    var d = Math.floor(this.p * this.value);
 
-        //  BG
-        this.bar.fillStyle(0x000000);
-        this.bar.fillRect(this.x - 20, this.y, 174, 16);
-
-        //  Health
-
-        this.bar.fillStyle(0xffffff);
-        this.bar.fillRect(this.x - 18, this.y + 2, 170, 12);
-
-        if (this.value < 30) {
-            this.bar.fillStyle(0xff0000);
-        }
-        else {
-            this.bar.fillStyle(0x00ff00);
-        }
-
-        var d = Math.floor(this.p * this.value);
-
-        this.bar.fillRect(this.x - 18, this.y + 2, d, 12);
-    }
-
+    this.bar.fillRect(this.x - 18, this.y + 2, d, 12);
+  }
 }
 
 class Missile extends Phaser.GameObjects.Image {
+  constructor(scene: any, frame: any) {
+    super(scene, 0, 0, "elves", frame);
 
-    constructor(scene: any, frame: any) {
-        super(scene, 0, 0, 'elves', frame);
-
-        this.visible = false;
-    }
-
+    this.visible = false;
+  }
 }
 
 class Elf extends Phaser.GameObjects.Sprite {
+  constructor(
+    scene: Phaser.Scene,
+    color: any,
+    x: number | undefined,
+    y: number | undefined
+  ) {
+    super(scene, x, y);
 
-    constructor(scene: Phaser.Scene, color: any, x: number | undefined, y: number | undefined) {
-        super(scene, x, y);
+    this.color = color;
 
-        this.color = color;
+    this.setTexture("elves");
+    this.setPosition(x, y);
 
-        this.setTexture('elves');
-        this.setPosition(x, y);
+    this.play(this.color + "Idle");
 
-        this.play(this.color + 'Idle');
+    scene.add.existing(this);
 
-        scene.add.existing(this);
+    this.on("animationcomplete", this.animComplete, this);
 
-        this.on('animationcomplete', this.animComplete, this);
+    this.alive = true;
 
-        this.alive = true;
+    var hx = this.color === "blue" ? 110 : -40;
 
-        var hx = (this.color === 'blue') ? 110 : -40;
+    this.hp = new HealthBar(scene, x - hx, y - 110);
 
-        this.hp = new HealthBar(scene, x - hx, y - 110);
+    this.timer = scene.time.addEvent({
+      delay: Phaser.Math.Between(1000, 3000),
+      callback: this.fire,
+      callbackScope: this,
+    });
+  }
 
-        this.timer = scene.time.addEvent({ delay: Phaser.Math.Between(1000, 3000), callback: this.fire, callbackScope: this });
+  preUpdate(time: number, delta: number) {
+    super.preUpdate(time, delta);
+  }
+
+  animComplete(animation: { key: string }) {
+    if (animation.key === this.color + "Attack") {
+      this.play(this.color + "Idle");
     }
+  }
 
-    preUpdate(time: number, delta: number) {
-        super.preUpdate(time, delta);
+  damage(amount: any) {
+    if (this.hp.decrease(amount)) {
+      this.alive = false;
+
+      this.play(this.color + "Dead");
+
+      this.color === "blue" ? bluesAlive-- : greensAlive--;
     }
+  }
 
-    animComplete(animation: { key: string }) {
-        if (animation.key === this.color + 'Attack') {
-            this.play(this.color + 'Idle');
-        }
+  fire() {
+    var target = this.color === "blue" ? getGreen() : getBlue();
+
+    if (target && this.alive) {
+      this.play(this.color + "Attack");
+
+      var offset = this.color === "blue" ? 20 : -20;
+      var targetX = this.color === "blue" ? target.x + 30 : target.x - 30;
+
+      this.missile.setPosition(this.x + offset, this.y + 20).setVisible(true);
+
+      this.scene.tweens.add({
+        targets: this.missile,
+        x: targetX,
+        ease: "Linear",
+        duration: 500,
+        onComplete: function (tween, targets) {
+          targets[0].setVisible(false);
+        },
+      });
+
+      target.damage(Phaser.Math.Between(2, 8));
+
+      this.timer = this.scene.time.addEvent({
+        delay: Phaser.Math.Between(1000, 3000),
+        callback: this.fire,
+        callbackScope: this,
+      });
     }
-
-    damage(amount: any) {
-        if (this.hp.decrease(amount)) {
-            this.alive = false;
-
-            this.play(this.color + 'Dead');
-
-            (this.color === 'blue') ? bluesAlive-- : greensAlive--;
-        }
-    }
-
-    fire() {
-        var target = (this.color === 'blue') ? getGreen() : getBlue();
-
-        if (target && this.alive) {
-            this.play(this.color + 'Attack');
-
-            var offset = (this.color === 'blue') ? 20 : -20;
-            var targetX = (this.color === 'blue') ? target.x + 30 : target.x - 30;
-
-            this.missile.setPosition(this.x + offset, this.y + 20).setVisible(true);
-
-            this.scene.tweens.add({
-                targets: this.missile,
-                x: targetX,
-                ease: 'Linear',
-                duration: 500,
-                onComplete: function (tween, targets) {
-                    targets[0].setVisible(false);
-                }
-            });
-
-            target.damage(Phaser.Math.Between(2, 8));
-
-            this.timer = this.scene.time.addEvent({ delay: Phaser.Math.Between(1000, 3000), callback: this.fire, callbackScope: this });
-        }
-    }
-
+  }
 }
 
 class BlueElf extends Elf {
+  constructor(scene: this, x: number, y: number) {
+    super(scene, "blue", x, y);
 
-    constructor(scene: this, x: number, y: number) {
-        super(scene, 'blue', x, y);
+    this.missile = new Missile(scene, "blue-missile");
 
-        this.missile = new Missile(scene, 'blue-missile');
-
-        scene.add.existing(this.missile);
-    }
-
+    scene.add.existing(this.missile);
+  }
 }
 
 class GreenElf extends Elf {
+  constructor(scene: this, x: number, y: number) {
+    super(scene, "green", x, y);
 
-    constructor(scene: this, x: number, y: number) {
-        super(scene, 'green', x, y);
+    this.missile = new Missile(scene, "green-missile");
 
-        this.missile = new Missile(scene, 'green-missile');
-
-        scene.add.existing(this.missile);
-    }
-
+    scene.add.existing(this.missile);
+  }
 }
 
 let blues: any[] = [];
@@ -182,261 +183,279 @@ let greens: any[] = [];
 var bluesAlive = 1;
 var greensAlive = 1;
 const randomScenes = (max) => {
-    const random = Math.floor(Math.random() * max);
-    return scenes[random];
+  const random = Math.floor(Math.random() * max);
+  return scenes[random];
 };
 
 const scenes = [scene1, scene2, scene3];
 
-
-
-
 class BattleScene extends Phaser.Scene {
+  preload() {
+    this.load.image("correct", correct);
+    this.load.image("wrong", wrong);
+    this.load.audio("fightMusic", fighTrack);
+    this.load.audio("mov", mov);
+    this.load.image("background", randomScenes(3));
+    this.load.atlas("elves", magicBg, magic);
+    this.load.image("Heart", Heart);
+    this.load.image("Heart2", Heart);
+    this.load.image("panel", panel);
+    this.load.image("panel2", panel);
+  }
+  create() {
+    let music = this.sound.add("fightMusic");
+    let musicConfig = {
+      mute: false,
+      volume: 0.1,
+      rate: 1,
+      detune: 0,
+      seek: 0,
+      loop: true,
+      delay: 0,
+    };
+    music.play(musicConfig);
 
-    preload() {
-        this.load.image("correct",correct);
-        this.load.image("wrong", wrong);
-        this.load.atlas("fighter", fighterBg, fighter);
-        this.load.audio("fightMusic", fighTrack);
-        this.load.audio("mov", mov);
-        this.load.image("background", randomScenes(3));
-        this.load.atlas("elves", magicBg, magic);
-        this.load.image("Heart", Heart);
-        this.load.image("Heart2", Heart);
-        this.load.image("panel", panel);
-        this.load.image("panel2", panel);
-    }
-    create() {        
-        let music = this.sound.add("fightMusic");
-        let musicConfig = {
-            mute: false,
-            volume: 0.1,
-            rate: 1,
-            detune: 0,
-            seek: 0,
-            loop: true,
-            delay: 0,
-        
-        };
-        music.play(musicConfig);
+    let mov = this.sound.add("mov");
+    let movSoundConfig = {
+      mute: false,
+      volume: 0.5,
+      rate: 1,
+      detune: 0,
+      seek: 0,
+      loop: false,
+      delay: 0,
+    };
+    mov.play(movSoundConfig);
 
-        let mov = this.sound.add("mov");
-        let movSoundConfig={
-            mute: false,
-            volume:0.5,
-            rate:1,
-            detune: 0,
-            seek: 0,
-            loop: false,
-            delay: 0
-        };
-        mov.play(movSoundConfig);
+    const movSound = document.querySelector(".battle_buttons");
+    movSound?.addEventListener("pointerover", () => {
+      mov.play();
+    });
 
-       const movSound = document.querySelector('.battle_buttons');
-       movSound?.addEventListener('pointerover', ()=>{
-        mov.play();
-       })
+    let correctAnswer: GameObjects.Image;
+    let wrongAnswer: GameObjects.Image;
 
-        
-        
-        let correctAnswer: GameObjects.Image
-        let wrongAnswer: GameObjects.Image
-       
+    let answer = document.querySelector("#answer");
+    answer?.addEventListener("click", () => {
+      correctAnswer = this.add.image(
+        this.cameras.main.width / 2,
+        this.cameras.main.height / 3.5 - 80,
+        "correct"
+      );
 
-        let answer = document.querySelector('#answer');
-        answer?.addEventListener('click', ()=>{
-            
-            correctAnswer = this.add.image(
-                this.cameras.main.width / 2,
-                this.cameras.main.height / 3.5 - 80,
-                "correct"
-            );
-            
-            correctAnswer.displayHeight = 250;
-            correctAnswer.displayWidth = 300;
-          
-               
-            
-        })
-        
+      correctAnswer.displayHeight = 250;
+      correctAnswer.displayWidth = 300;
+    });
 
-        
+    let answer2 = document.querySelector("#answer2");
+    answer2?.addEventListener("click", () => {
+      wrongAnswer = this.add.image(
+        this.cameras.main.width / 2,
+        this.cameras.main.height / 3.5 - 80,
+        "wrong"
+      );
 
-        let answer2 = document.querySelector('#answer2');
-        answer2?.addEventListener('click',()=>{
-     
-            wrongAnswer = this.add.image(
-                this.cameras.main.width / 2,
-                this.cameras.main.height / 3.5 - 80,
-                "wrong"
-            );
-         
-            wrongAnswer.displayHeight = 250;
-            wrongAnswer.displayWidth = 250;
-            
-            
-        })
+      wrongAnswer.displayHeight = 250;
+      wrongAnswer.displayWidth = 250;
+    });
 
-        let bg = this.add
-            .image(
-                this.cameras.main.width / 2,
-                this.cameras.main.height / 2,
-                "background"
-            )
-            .setOrigin(0.5, 0.5);
-        bg.displayWidth = this.sys.canvas.width;
-        bg.displayHeight = this.sys.canvas.height;
-        //panel player 1
-        let panel = this.add.image(
-            this.cameras.main.width / 6.5,
-            this.cameras.main.height / 3 - 150,
-            "panel"
-        )
-        panel.displayWidth = 280;
-        panel.displayHeight = 100;
-        //pnael player 2
-        let panel2 = this.add.image(
-            this.cameras.main.width / 1.18,
-            this.cameras.main.height / 3 - 150,
-            "panel2"
-        )
-        panel2.displayWidth = 280;
-        panel2.displayHeight = 100;
-        //hearth image lifebar or heatlhbar
-        let heart = this.add.image(
-            this.cameras.main.width / 12,
-            this.cameras.main.width / 3 - 400,
-            'Heart'
-        )
-        heart.displayWidth = 35;
-        heart.displayHeight = 35;
-        //hearth image lifebar or heatlhbar
-        let heart2 = this.add.image(
-            this.cameras.main.width / 1.29,
-            this.cameras.main.width / 3 - 400,
-            'Heart'
-        )
-        heart2.displayWidth = 35;
-        heart2.displayHeight = 35;
-        //characters
-        //alive
-        this.anims.create({ key: 'greenIdle', frames: this.anims.generateFrameNames('elves', { prefix: 'green_idle_', start: 0, end: 4 }), frameRate: 10, repeat: -1 });
-        this.anims.create({ key: 'blueIdle', frames: this.anims.generateFrameNames('elves', { prefix: 'blue_idle_', start: 0, end: 4 }), frameRate: 10, repeat: -1 });
-        //attack
-        this.anims.create({ key: 'greenAttack', frames: this.anims.generateFrameNames('elves', { prefix: 'green_attack_', start: 0, end: 5 }), frameRate: 10 });
-        this.anims.create({ key: 'blueAttack', frames: this.anims.generateFrameNames('elves', { prefix: 'blue_attack_', start: 0, end: 4 }), frameRate: 10 });
-        //die
-        this.anims.create({ key: 'greenDead', frames: this.anims.generateFrameNames('elves', { prefix: 'green_die_', start: 0, end: 4 }), frameRate: 6 });
-        this.anims.create({ key: 'blueDead', frames: this.anims.generateFrameNames('elves', { prefix: 'blue_die_', start: 0, end: 4 }), frameRate: 6 });
-        // blues.push(new BlueElf(this, 120, 476));
-        // blues.push(new BlueElf(this, 220, 480));
-        // blues.push(new BlueElf(this, 320, 484));
-        blues.push(new BlueElf(this, 300, 480));
+    let bg = this.add
+      .image(
+        this.cameras.main.width / 2,
+        this.cameras.main.height / 2,
+        "background"
+      )
+      .setOrigin(0.5, 0.5);
+    bg.displayWidth = this.sys.canvas.width;
+    bg.displayHeight = this.sys.canvas.height;
+    //panel player 1
+    let panel = this.add.image(
+      this.cameras.main.width / 6.5,
+      this.cameras.main.height / 3 - 150,
+      "panel"
+    );
+    panel.displayWidth = 280;
+    panel.displayHeight = 100;
+    //pnael player 2
+    let panel2 = this.add.image(
+      this.cameras.main.width / 1.18,
+      this.cameras.main.height / 3 - 150,
+      "panel2"
+    );
+    panel2.displayWidth = 280;
+    panel2.displayHeight = 100;
+    //hearth image lifebar or heatlhbar
+    let heart = this.add.image(
+      this.cameras.main.width / 12,
+      this.cameras.main.width / 3 - 400,
+      "Heart"
+    );
+    heart.displayWidth = 35;
+    heart.displayHeight = 35;
+    //hearth image lifebar or heatlhbar
+    let heart2 = this.add.image(
+      this.cameras.main.width - this.cameras.main.width / 5,
+      this.cameras.main.height / this.cameras.main.height + 160,
+      "Heart"
+    );
+    heart2.displayWidth = 35;
+    heart2.displayHeight = 35;
+    //characters
+    //alive
+    this.anims.create({
+      key: "greenIdle",
+      frames: this.anims.generateFrameNames("elves", {
+        prefix: "green_idle_",
+        start: 0,
+        end: 4,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "blueIdle",
+      frames: this.anims.generateFrameNames("elves", {
+        prefix: "blue_idle_",
+        start: 0,
+        end: 4,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
+    //attack
+    this.anims.create({
+      key: "greenAttack",
+      frames: this.anims.generateFrameNames("elves", {
+        prefix: "green_attack_",
+        start: 0,
+        end: 5,
+      }),
+      frameRate: 10,
+    });
+    this.anims.create({
+      key: "blueAttack",
+      frames: this.anims.generateFrameNames("elves", {
+        prefix: "blue_attack_",
+        start: 0,
+        end: 4,
+      }),
+      frameRate: 10,
+    });
+    //die
+    this.anims.create({
+      key: "greenDead",
+      frames: this.anims.generateFrameNames("elves", {
+        prefix: "green_die_",
+        start: 0,
+        end: 4,
+      }),
+      frameRate: 6,
+    });
+    this.anims.create({
+      key: "blueDead",
+      frames: this.anims.generateFrameNames("elves", {
+        prefix: "blue_die_",
+        start: 0,
+        end: 4,
+      }),
+      frameRate: 6,
+    });
+    // blues.push(new BlueElf(this, 120, 476));
+    // blues.push(new BlueElf(this, 220, 480));
+    // blues.push(new BlueElf(this, 320, 484));
+    blues.push(new BlueElf(this, 300, 480));
 
-        // greens.push(new GreenElf(this, 560, 486));
-        // greens.push(new GreenElf(this, 670, 488));
-        // greens.push(new GreenElf(this, 780, 485));
-        greens.push(new GreenElf(this, 1150, 484));
-        
-    
-    }
+    // greens.push(new GreenElf(this, 560, 486));
+    // greens.push(new GreenElf(this, 670, 488));
+    // greens.push(new GreenElf(this, 780, 485));
+    greens.push(new GreenElf(this, 1150, 484));
+  }
 }
 function getGreen() {
-    if (greensAlive) {
-        greens = Phaser.Utils.Array.Shuffle(greens);
+  if (greensAlive) {
+    greens = Phaser.Utils.Array.Shuffle(greens);
 
-        for (var i = 0; i < greens.length; i++) {
-            if (greens[i].alive) {
-                return greens[i];
-            }
-        }
+    for (var i = 0; i < greens.length; i++) {
+      if (greens[i].alive) {
+        return greens[i];
+      }
     }
+  }
 
-    return false;
+  return false;
 }
 function getBlue() {
-    if (bluesAlive) {
-        blues = Phaser.Utils.Array.Shuffle(blues);
+  if (bluesAlive) {
+    blues = Phaser.Utils.Array.Shuffle(blues);
 
-        for (var i = 0; i < blues.length; i++) {
-            if (blues[i].alive) {
-                return blues[i];
-            }
-        }
+    for (var i = 0; i < blues.length; i++) {
+      if (blues[i].alive) {
+        return blues[i];
+      }
     }
+  }
 
-    return false;
+  return false;
 }
 
 const battleConfig: GameInstance = {
+  width: "100%",
+  height: "100%",
+  type: Phaser.AUTO,
+  scale: {
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH,
     width: "100%",
     height: "100%",
-    type: Phaser.AUTO,
-    scale: {
-        mode: Phaser.Scale.FIT,
-        autoCenter: Phaser.Scale.CENTER_BOTH,
-        width: "100%",
-        height: "100%",
+  },
+  render: {
+    antialias: false,
+    pixelArt: true,
+    roundPixels: true,
+  },
+  physics: {
+    default: "arcade",
+    arcade: {
+      gravity: { y: 400 },
+      debug: true,
     },
-    render: {
-        antialias: false,
-        pixelArt: true,
-        roundPixels: true,
-    },
-    physics: {
-        default: "arcade",
-        arcade: {
-            gravity: { y: 400 },
-            debug: true,
-        },
-    },
-    scene: BattleScene
-}
-
-
+  },
+  scene: BattleScene,
+};
 
 const Battle = (props: any) => {
-    const gameRef = useRef<HTMLIonPhaserElement>(null);
-    const [game, setGame] = useState<GameInstance>();
-    const { setInitialize, initialize, name, setName, changeView } = props;
-    useEffect(() => {
-        if (!props.initialize) {
-            setGame(Object.assign({}, battleConfig));
-        }
-    }, [props.initialize]);
-    return (
-        <>
-            <IonPhaser ref={gameRef} game={game} initialize={!props.initialize}/>
+  const gameRef = useRef<HTMLIonPhaserElement>(null);
+  const [game, setGame] = useState<GameInstance>();
+  // const { setInitialize, initialize, name, setName, changeView } = props;
+  useEffect(() => {
+    if (!props.initialize) {
+      setGame(Object.assign({}, battleConfig));
+    }
+  }, [props.initialize]);
+  return (
+    <>
+      <IonPhaser ref={gameRef} game={game} initialize={!props.initialize} />
 
-            <div
-                className='battle'
-            >
-                <div className='battle_container'>
-                    <div className='battle_question'>
-                        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Similique magni quaerat laboriosam officiis fugit libero! Sequi ut rem libero nihil quisquam blanditiis sint voluptate, iure, ad adipisci ipsam debitis qui.</p>
-                    </div>
+      <div className="battle">
+        <div className="battle_container">
+          <div className="battle_question">
+            <p>
+              Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+              Similique magni quaerat laboriosam officiis fugit libero! Sequi ut
+              rem libero nihil quisquam blanditiis sint voluptate, iure, ad
+              adipisci ipsam debitis qui.
+            </p>
+          </div>
 
-                    <div className='battle_buttons'>
-                        <button id='answer'
-                            className='battle_answer'
-                           
-                            
+          <div className="battle_buttons">
+            <button id="answer" className="battle_answer" />
+            <button id="answer2" className="battle_answer" />
+            <button id="answer" className="battle_answer" />
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
 
-                        />
-                        <button id='answer2'
-                            className='battle_answer'
-
-                        />
-                        <button id='answer'
-                            className='battle_answer'
-                        />
-                    </div>
-
-                </div>
-
-            </div>
-        </>
-    )
-}
-
-export default Battle
+export default Battle;
