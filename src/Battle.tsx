@@ -18,13 +18,12 @@ class HealthBar {
   constructor(scene: any, x: any, y: any) {
     this.bar = new Phaser.GameObjects.Graphics(scene);
 
-    constructor(scene: any, x, y: any) {
-        this.bar = new Phaser.GameObjects.Graphics(scene);
+    this.x = x - 50;
+    this.y = y - 270;
+    this.value = 200;
+    this.p = 170 / 200;
 
-        this.x = x - 50;
-        this.y = y - 270;
-        this.value = 200;
-        this.p = 170 / 200;
+    this.draw();
 
     scene.add.existing(this.bar);
   }
@@ -46,12 +45,12 @@ class HealthBar {
 
     //  BG
     this.bar.fillStyle(0x000000);
-    this.bar.fillRect(this.x - 20, this.y, 174, 16);
+    this.bar.fillRect(this.x, this.y, 174, 16);
 
     //  Health
 
     this.bar.fillStyle(0xffffff);
-    this.bar.fillRect(this.x - 18, this.y + 2, 170, 12);
+    this.bar.fillRect(this.x, this.y + 2, 170, 12);
 
     if (this.value < 30) {
       this.bar.fillStyle(0xff0000);
@@ -59,31 +58,9 @@ class HealthBar {
       this.bar.fillStyle(0x00ff00);
     }
 
-    draw() {
-        this.bar.clear();
+    var d = Math.floor(this.p * this.value);
 
-        //  BG
-        this.bar.fillStyle(0x000000);
-        this.bar.fillRect(this.x, this.y, 174, 16);
-
-        //  Health
-
-        this.bar.fillStyle(0xffffff);
-        this.bar.fillRect(this.x, this.y + 2, 170, 12);
-
-        if (this.value < 30) {
-            this.bar.fillStyle(0xff0000);
-        }
-        else {
-            this.bar.fillStyle(0x00ff00);
-        }
-
-        var d = Math.floor(this.p * this.value);
-
-        this.bar.fillRect(this.x, this.y + 2, d, 12);
-    }
-
-    this.bar.fillRect(this.x - 18, this.y + 2, d, 12);
+    this.bar.fillRect(this.x, this.y + 2, d, 12);
   }
 }
 
@@ -282,61 +259,111 @@ class BattleScene extends Phaser.Scene {
       wrongAnswer.displayWidth = 250;
     });
 
-        let bg = this.add
-            .image(
-                this.cameras.main.width / 2,
-                this.cameras.main.height / 2,
-                "background"
-            )
-            .setOrigin(0.5, 0.5);
-        bg.displayWidth = this.sys.canvas.width;
-        bg.displayHeight = this.sys.canvas.height;
-        //panel player 1
-        let panel = this.add.image(
-            this.cameras.main.width / 6.5,
-            this.cameras.main.height / 3 - 150,
-            "panel"
-        )
-        panel.displayWidth = 280;
-        panel.displayHeight = 100;
-        //pnael player 2
-        let panel2 = this.add.image(
-            this.cameras.main.width / 1.2,
-            this.cameras.main.height / 3 - 150,
-            "panel2"
-        )
-        panel2.displayWidth = 280;
-        panel2.displayHeight = 100;
-        //hearth image lifebar or heatlhbar
-        let heart = this.add.image(
-            this.cameras.main.width / 12,
-            this.cameras.main.width / 3 - 430,
-            'Heart'
-        )
-        heart.displayWidth = 35;
-        heart.displayHeight = 35;
-        //hearth image lifebar or heatlhbar
-        let heart2 = this.add.image(
-            this.cameras.main.width / 1.12,
-            this.cameras.main.width / 3 - 430,
-            'Heart'
-        )
-        heart2.displayWidth = 35;
-        heart2.displayHeight = 35;
-        //characters
-        //alive
-        this.anims.create({ key: 'greenIdle', frames: this.anims.generateFrameNames('elves', { prefix: 'green_idle_', start: 0, end: 4 }), frameRate: 10, repeat: -1 });
-        this.anims.create({ key: 'blueIdle', frames: this.anims.generateFrameNames('elves', { prefix: 'blue_idle_', start: 0, end: 4 }), frameRate: 10, repeat: -1 });
-        //attack
-        this.anims.create({ key: 'greenAttack', frames: this.anims.generateFrameNames('elves', { prefix: 'green_attack_', start: 0, end: 5 }), frameRate: 10 });
-        this.anims.create({ key: 'blueAttack', frames: this.anims.generateFrameNames('elves', { prefix: 'blue_attack_', start: 0, end: 4 }), frameRate: 10 });
-        //die
-        this.anims.create({ key: 'greenDead', frames: this.anims.generateFrameNames('elves', { prefix: 'green_die_', start: 0, end: 4 }), frameRate: 6 });
-        this.anims.create({ key: 'blueDead', frames: this.anims.generateFrameNames('elves', { prefix: 'blue_die_', start: 0, end: 4 }), frameRate: 6 });
-        // blues.push(new BlueElf(this, 120, 476));
-        // blues.push(new BlueElf(this, 220, 480));
-        // blues.push(new BlueElf(this, 320, 484));
-        blues.push(new BlueElf(this, 300, 480));
+    let bg = this.add
+      .image(
+        this.cameras.main.width / 2,
+        this.cameras.main.height / 2,
+        "background"
+      )
+      .setOrigin(0.5, 0.5);
+    bg.displayWidth = this.sys.canvas.width;
+    bg.displayHeight = this.sys.canvas.height;
+    //panel player 1
+    let panel = this.add.image(
+      this.cameras.main.width / 6.5,
+      this.cameras.main.height / 3 - 150,
+      "panel"
+    );
+    panel.displayWidth = 280;
+    panel.displayHeight = 100;
+    //pnael player 2
+    let panel2 = this.add.image(
+      this.cameras.main.width / 1.2,
+      this.cameras.main.height / 3 - 150,
+      "panel2"
+    );
+    panel2.displayWidth = 280;
+    panel2.displayHeight = 100;
+    //hearth image lifebar or heatlhbar
+    let heart = this.add.image(
+      this.cameras.main.width / 12,
+      this.cameras.main.width / 3 - 430,
+      "Heart"
+    );
+    heart.displayWidth = 35;
+    heart.displayHeight = 35;
+    //hearth image lifebar or heatlhbar
+    let heart2 = this.add.image(
+      this.cameras.main.width / 1.12,
+      this.cameras.main.width / 3 - 430,
+      "Heart"
+    );
+    heart2.displayWidth = 35;
+    heart2.displayHeight = 35;
+    //characters
+    //alive
+    this.anims.create({
+      key: "greenIdle",
+      frames: this.anims.generateFrameNames("elves", {
+        prefix: "green_idle_",
+        start: 0,
+        end: 4,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "blueIdle",
+      frames: this.anims.generateFrameNames("elves", {
+        prefix: "blue_idle_",
+        start: 0,
+        end: 4,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
+    //attack
+    this.anims.create({
+      key: "greenAttack",
+      frames: this.anims.generateFrameNames("elves", {
+        prefix: "green_attack_",
+        start: 0,
+        end: 5,
+      }),
+      frameRate: 10,
+    });
+    this.anims.create({
+      key: "blueAttack",
+      frames: this.anims.generateFrameNames("elves", {
+        prefix: "blue_attack_",
+        start: 0,
+        end: 4,
+      }),
+      frameRate: 10,
+    });
+    //die
+    this.anims.create({
+      key: "greenDead",
+      frames: this.anims.generateFrameNames("elves", {
+        prefix: "green_die_",
+        start: 0,
+        end: 4,
+      }),
+      frameRate: 6,
+    });
+    this.anims.create({
+      key: "blueDead",
+      frames: this.anims.generateFrameNames("elves", {
+        prefix: "blue_die_",
+        start: 0,
+        end: 4,
+      }),
+      frameRate: 6,
+    });
+    // blues.push(new BlueElf(this, 120, 476));
+    // blues.push(new BlueElf(this, 220, 480));
+    // blues.push(new BlueElf(this, 320, 484));
+    blues.push(new BlueElf(this, 300, 480));
 
     // greens.push(new GreenElf(this, 560, 486));
     // greens.push(new GreenElf(this, 670, 488));
