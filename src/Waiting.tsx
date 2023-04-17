@@ -68,8 +68,7 @@ const Waiting = (props: any) => {
         console.log(data.data, ' entro al else');
         if(data.data === 2){
           setWaiting(false);
-        }
-        if(data.data >= 3){
+        }else{
           // console.log('Desde el else');
           setWaiting(true);
           props.setConnection(false);
