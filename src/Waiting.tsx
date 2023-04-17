@@ -61,12 +61,19 @@ const Waiting = (props: any) => {
 
   useEffect(() => {
     ws.on("connectedInRoom", (data) => {
-      console.log(data);
       if (data.data < 2) {
-        console.log(data.data.length, " usuarios conectados");
         setWaiting(true);
+        console.log(data.data, " usuarios conectados");
       } else {
-        setWaiting(false);
+        console.log(data.data, ' entro al else');
+        if(data.data === 2){
+          setWaiting(false);
+        }else{
+          // console.log('Desde el else');
+          setWaiting(true);
+          props.setConnection(false);
+          props.ejecutarAlerta('La sala ya está llena', 'error')
+        }
       }
     });
 

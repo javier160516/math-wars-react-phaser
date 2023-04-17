@@ -78,6 +78,7 @@ export default function App() {
           <>
             <Waiting
               alias={alias}
+              setAlias={setAlias}
               connection={connection}
               setConnection={setConnection}
             />

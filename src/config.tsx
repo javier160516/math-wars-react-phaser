@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client'
 
-const ws = io('http://localhost:5000', {
+const ws = io('https://videojuego-api.onrender.com', {
         transports: ["websocket", "polling"]
     }
 );
