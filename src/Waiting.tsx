@@ -69,7 +69,7 @@ const Waiting = (props: any) => {
         if(data.data === 2){
           setWaiting(false);
         }
-        if(data.data > 2){
+        if(data.data >= 3){
           // console.log('Desde el else');
           setWaiting(true);
           props.setConnection(false);
