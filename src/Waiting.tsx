@@ -68,11 +68,11 @@ const Waiting = (props: any) => {
         console.log(data.data, ' entro al else');
         if(data.data === 2){
           setWaiting(false);
-        }else{
+        }
+        if(data.data > 2){
           // console.log('Desde el else');
           setWaiting(true);
           props.setConnection(false);
-          props.ejecutarAlerta('La sala ya está llena', 'error')
         }
       }
     });
