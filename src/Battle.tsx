@@ -6,182 +6,17 @@ import scene1 from "./assets/scenes/scene1-Bg.jpeg";
 import scene2 from "./assets/scenes/scene2-Bg.jpeg";
 import scene3 from "./assets/scenes/Scene3_Bg.jpeg";
 import Heart from "./assets/resources/heart.png";
-import magic from "./assets/characters/elves-craft-pixel.json";
-import magicBg from "./assets/characters/elves-craft-pixel.png";
 import correct from "./assets/correct_a3.svg";
 import wrong from "./assets/wrong_a2.svg";
 import fighTrack from "./assets/music/fight1.ogg";
 import mov from "./assets/soundeffects/mov.mp3";
 import panel from "./assets/resources/panel.png";
+import brawler from "./assets/characters/brawler.png"
+import knight from './assets/characters/knight.png'
+import ken from './assets/characters/spritesheet.png'
+import exp from './assets/characters/explosion.png'
+import { color } from "react-native-reanimated";
 
-class HealthBar {
-  constructor(scene: any, x: any, y: any) {
-    this.bar = new Phaser.GameObjects.Graphics(scene);
-
-    this.x = x - 50;
-    this.y = y - 270;
-    this.value = 200;
-    this.p = 170 / 200;
-
-    this.draw();
-
-    scene.add.existing(this.bar);
-  }
-
-  decrease(amount: number) {
-    this.value -= amount;
-
-    if (this.value < 0) {
-      this.value = 0;
-    }
-
-    this.draw();
-
-    return this.value === 0;
-  }
-
-  draw() {
-    this.bar.clear();
-
-    //  BG
-    this.bar.fillStyle(0x000000);
-    this.bar.fillRect(this.x, this.y, 174, 16);
-
-    //  Health
-
-    this.bar.fillStyle(0xffffff);
-    this.bar.fillRect(this.x, this.y + 2, 170, 12);
-
-    if (this.value < 30) {
-      this.bar.fillStyle(0xff0000);
-    } else {
-      this.bar.fillStyle(0x00ff00);
-    }
-
-    var d = Math.floor(this.p * this.value);
-
-    this.bar.fillRect(this.x, this.y + 2, d, 12);
-  }
-}
-
-class Missile extends Phaser.GameObjects.Image {
-  constructor(scene: any, frame: any) {
-    super(scene, 0, 0, "elves", frame);
-
-    this.visible = false;
-  }
-}
-
-class Elf extends Phaser.GameObjects.Sprite {
-  constructor(
-    scene: Phaser.Scene,
-    color: any,
-    x: number | undefined,
-    y: number | undefined
-  ) {
-    super(scene, x, y);
-
-    this.color = color;
-
-    this.setTexture("elves");
-    this.setPosition(x, y);
-
-    this.play(this.color + "Idle");
-
-    scene.add.existing(this);
-
-    this.on("animationcomplete", this.animComplete, this);
-
-    this.alive = true;
-
-    var hx = this.color === "blue" ? 110 : -40;
-
-    this.hp = new HealthBar(scene, x - hx, y - 110);
-
-    this.timer = scene.time.addEvent({
-      delay: Phaser.Math.Between(1000, 3000),
-      callback: this.fire,
-      callbackScope: this,
-    });
-  }
-
-  preUpdate(time: number, delta: number) {
-    super.preUpdate(time, delta);
-  }
-
-  animComplete(animation: { key: string }) {
-    if (animation.key === this.color + "Attack") {
-      this.play(this.color + "Idle");
-    }
-  }
-
-  damage(amount: any) {
-    if (this.hp.decrease(amount)) {
-      this.alive = false;
-
-      this.play(this.color + "Dead");
-
-      this.color === "blue" ? bluesAlive-- : greensAlive--;
-    }
-  }
-
-  fire() {
-    var target = this.color === "blue" ? getGreen() : getBlue();
-
-    if (target && this.alive) {
-      this.play(this.color + "Attack");
-
-      var offset = this.color === "blue" ? 20 : -20;
-      var targetX = this.color === "blue" ? target.x + 30 : target.x - 30;
-
-      this.missile.setPosition(this.x + offset, this.y + 20).setVisible(true);
-
-      this.scene.tweens.add({
-        targets: this.missile,
-        x: targetX,
-        ease: "Linear",
-        duration: 500,
-        onComplete: function (tween, targets) {
-          targets[0].setVisible(false);
-        },
-      });
-
-      target.damage(Phaser.Math.Between(2, 8));
-
-      this.timer = this.scene.time.addEvent({
-        delay: Phaser.Math.Between(1000, 3000),
-        callback: this.fire,
-        callbackScope: this,
-      });
-    }
-  }
-}
-
-class BlueElf extends Elf {
-  constructor(scene: this, x: number, y: number) {
-    super(scene, "blue", x, y);
-
-    this.missile = new Missile(scene, "blue-missile");
-
-    scene.add.existing(this.missile);
-  }
-}
-
-class GreenElf extends Elf {
-  constructor(scene: this, x: number, y: number) {
-    super(scene, "green", x, y);
-
-    this.missile = new Missile(scene, "green-missile");
-
-    scene.add.existing(this.missile);
-  }
-}
-
-let blues: any[] = [];
-let greens: any[] = [];
-
-var bluesAlive = 1;
-var greensAlive = 1;
 const randomScenes = (max) => {
   const random = Math.floor(Math.random() * max);
   return scenes[random];
@@ -196,11 +31,15 @@ class BattleScene extends Phaser.Scene {
     this.load.audio("fightMusic", fighTrack);
     this.load.audio("mov", mov);
     this.load.image("background", randomScenes(3));
-    this.load.atlas("elves", magicBg, magic);
     this.load.image("Heart", Heart);
     this.load.image("Heart2", Heart);
     this.load.image("panel", panel);
     this.load.image("panel2", panel);
+    this.load.spritesheet('brawler', brawler, { frameWidth: 48, frameHeight: 48 });
+    this.load.spritesheet('knight', knight, { frameWidth: 95, frameHeight: 48 });
+    this.load.spritesheet('ken', ken, { frameWidth: 140, frameHeight: 71 });
+    this.load.spritesheet('exp', exp, { frameWidth: 65, frameHeight: 65 })
+    // this.load.spritesheet('life', life, {frameWidth: 20, frameHeight: 20})
   }
   create() {
     let music = this.sound.add("fightMusic");
@@ -301,102 +140,202 @@ class BattleScene extends Phaser.Scene {
     heart2.displayWidth = 35;
     heart2.displayHeight = 35;
     //characters
-    //alive
-    this.anims.create({
-      key: "greenIdle",
-      frames: this.anims.generateFrameNames("elves", {
-        prefix: "green_idle_",
-        start: 0,
-        end: 4,
-      }),
-      frameRate: 10,
-      repeat: -1,
-    });
-    this.anims.create({
-      key: "blueIdle",
-      frames: this.anims.generateFrameNames("elves", {
-        prefix: "blue_idle_",
-        start: 0,
-        end: 4,
-      }),
-      frameRate: 10,
-      repeat: -1,
-    });
-    //attack
-    this.anims.create({
-      key: "greenAttack",
-      frames: this.anims.generateFrameNames("elves", {
-        prefix: "green_attack_",
-        start: 0,
-        end: 5,
-      }),
-      frameRate: 10,
-    });
-    this.anims.create({
-      key: "blueAttack",
-      frames: this.anims.generateFrameNames("elves", {
-        prefix: "blue_attack_",
-        start: 0,
-        end: 4,
-      }),
-      frameRate: 10,
-    });
-    //die
-    this.anims.create({
-      key: "greenDead",
-      frames: this.anims.generateFrameNames("elves", {
-        prefix: "green_die_",
-        start: 0,
-        end: 4,
-      }),
-      frameRate: 6,
-    });
-    this.anims.create({
-      key: "blueDead",
-      frames: this.anims.generateFrameNames("elves", {
-        prefix: "blue_die_",
-        start: 0,
-        end: 4,
-      }),
-      frameRate: 6,
-    });
-    // blues.push(new BlueElf(this, 120, 476));
-    // blues.push(new BlueElf(this, 220, 480));
-    // blues.push(new BlueElf(this, 320, 484));
-    blues.push(new BlueElf(this, 300, 480));
+    // const current = this.add.text(48, 460, 'Playing: walk', { color: '#00ff00' });
 
-    // greens.push(new GreenElf(this, 560, 486));
-    // greens.push(new GreenElf(this, 670, 488));
-    // greens.push(new GreenElf(this, 780, 485));
-    greens.push(new GreenElf(this, 1150, 484));
-  }
-}
-function getGreen() {
-  if (greensAlive) {
-    greens = Phaser.Utils.Array.Shuffle(greens);
+    // this.add.image(0, 0, 'brawler', '__BASE').setOrigin(0, 0);
+    // target--------------------------------------------
+    {
+      this.anims.create({
+        key: 'walk',
+        frames: this.anims.generateFrameNumbers('brawler', { frames: [0, 1, 2, 3] }),
+        frameRate: 8,
+        repeat: -1
+      });
 
-    for (var i = 0; i < greens.length; i++) {
-      if (greens[i].alive) {
-        return greens[i];
-      }
+      this.anims.create({
+        key: 'idle',
+        frames: this.anims.generateFrameNumbers('brawler', { frames: [5, 6, 7, 8] }),
+        frameRate: 8,
+        repeat: -1
+      });
+
+      this.anims.create({
+        key: 'kick',
+        frames: this.anims.generateFrameNumbers('brawler', { frames: [10, 11, 12, 13, 10] }),
+        frameRate: 8,
+        repeat: -1,
+        repeatDelay: 2000
+      });
+
+      this.anims.create({
+        key: 'punch',
+        frames: this.anims.generateFrameNumbers('brawler', { frames: [15, 16, 17, 18, 17, 15] }),
+        frameRate: 8,
+        repeat: -1,
+        repeatDelay: 2000
+      });
+
+      this.anims.create({
+        key: 'jump',
+        frames: this.anims.generateFrameNumbers('brawler', { frames: [20, 21, 22, 23] }),
+        frameRate: 8,
+        repeat: -1
+      });
+
+      this.anims.create({
+        key: 'jumpkick',
+        frames: this.anims.generateFrameNumbers('brawler', { frames: [20, 21, 22, 23, 25, 23, 22, 21] }),
+        frameRate: 8,
+        repeat: -1
+      });
+
+      this.anims.create({
+        key: 'win',
+        frames: this.anims.generateFrameNumbers('brawler', { frames: [30, 31] }),
+        frameRate: 8,
+        repeat: -1,
+        repeatDelay: 2000
+      });
+
+      this.anims.create({
+        key: 'die',
+        frames: this.anims.generateFrameNumbers('brawler', { frames: [35, 36, 37] }),
+        frameRate: 8,
+      });
+
+      const keys = ['walk', 'idle', 'kick', 'punch', 'jump', 'jumpkick', 'win', 'die'];
+      const cody = this.add.sprite(200, 370).setFlip(true);
+      cody.setInteractive();
+      cody.setScale(4);
+      cody.play('walk');
+
+      let c = 0;
+      // this.input.on('pointerup', function (pointer: any) {
+      //   c++;
+      //   if (c === keys.length) {
+      //     c = 0;
+      //   }
+      //   cody.play(keys[c]);
+      //   // current.setText('Playing: ' + keys[c]);
+      // });
+      // cody.on('pointerup', function(){
+      //   c++;
+      //   if (c === keys.length){
+      //     c = 0;
+      //   }
+      //   cody.play(keys[c])
+      // })
+
+      let label = this.add.text(800, 600, 'Respuesta 1', { color: '#fafafa' })
+      label.setInteractive();
+      label.on('pointerup', function () {
+        c++;
+        if (c === keys.length) {
+          c = 0;
+        }
+        cody.play(keys[c])
+      })
+      label.setColor("#92a8d1")
+      label.setPadding(30);
+      // labaelKen.width(300)
+      label.setBackgroundColor("#ffffff")
+      label.setOrigin(0.05);
+      label.setStyle({ FillStyle: "#fefefe" })
     }
-  }
+    
 
-  return false;
-}
-function getBlue() {
-  if (bluesAlive) {
-    blues = Phaser.Utils.Array.Shuffle(blues);
+    //second character
 
-    for (var i = 0; i < blues.length; i++) {
-      if (blues[i].alive) {
-        return blues[i];
+    //"13,10,9,6,5,3,2,1"
+    this.anims.create({
+      key: 'ken1',
+      frames: this.anims.generateFrameNumbers('ken', { frames: [0, 1, 3, 4, 5, 6] }),
+      frameRate: 8,
+      repeat: -1,
+    })
+    this.anims.create({
+      key: 'ken2',
+      frames: this.anims.generateFrameNumbers('ken', { frames: [7, 8, 9, 10, 11, 12, 13, 14, 15, 16] }),
+      frameRate: 10,
+      repeat: -1
+      // repeatDelay: 2000
+    })
+    const ken = this.add.sprite(900, 370);
+    ken.setScale(4);
+    ken.play('ken1');
+    const keyA = ['ken1', 'ken2']
+
+    const labaelKen = this.add.text(1000, 600, 'Respuesta 2', { color: "#fafafa" });
+    labaelKen.setInteractive();
+    labaelKen.on('pointerup', function () {
+      k++;
+      if (k === keyA.length) {
+        k = 0;
       }
-    }
-  }
+      ken.play(keyA[k]);
+    })
+    let k = 0;
+    labaelKen.setColor("#92a8d1")
+    labaelKen.setPadding(30);
+    // labaelKen.width(300)
+    labaelKen.setBackgroundColor("#ffffff")
+    labaelKen.setOrigin(0.05);
+    labaelKen.setStyle({ FillStyle: "#fefefe" })
 
-  return false;
+    //button
+    const answer3 = this.add.text(1200, 600, 'Respuesta 3', { color: "#fafafa" });
+    answer3.setInteractive();
+    answer3.on('pointerup', function(){
+      console.log('answer 3');
+    })
+    answer3.setColor("#92a8d1")
+    answer3.setPadding(30);
+    // labaelKen.width(300)
+    answer3.setBackgroundColor("#ffffff")
+    answer3.setOrigin(0.05);
+    answer3.setStyle({ FillStyle: "#fefefe" })
+
+
+    //health bar
+
+
+    // console.log(widthA + "widtha");
+
+    // let actual = widthB
+    let graph = this.add.graphics();
+    let graphics = this.add.graphics();
+
+    let a = 200
+
+    let life1 = new Phaser.Geom.Rectangle(130, 100, a, 20);
+
+    graph.clear()
+    graph.fillRectShape(life1)
+    graph.fillStyle(0x00000)
+
+    let widthA = 108;
+    let widthB = 2;
+
+    let hit = this.add.text(420, 80, 'lifeBar', { color: "fafafa" });
+    hit.setInteractive();
+    hit.setColor("#fffffff");
+    hit.on('pointerup', function () {
+      // widthB = -2
+      // widthA = 20
+      widthB -= widthA
+
+      // life.width = widthB--
+      console.log('hello');
+     
+      let life = new Phaser.Geom.Rectangle(330, 100, widthB, 20);
+      graphics.fillRectShape(life)
+      graphics.fillStyle(0xfafafa)
+      console.log(life.width + "hello");
+    })
+    // graphics.fillRectShape(life)
+  }
 }
+
 
 const battleConfig: GameInstance = {
   width: "100%",
@@ -448,9 +387,9 @@ const Battle = (props: any) => {
           </div>
 
           <div className="battle_buttons">
-            <button id="answer" className="battle_answer" />
+            {/* <button id="answer" className="battle_answer" />
             <button id="answer2" className="battle_answer" />
-            <button id="answer" className="battle_answer" />
+            <button id="answer" className="battle_answer" /> */}
           </div>
         </div>
       </div>
